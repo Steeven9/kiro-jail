@@ -25,14 +25,14 @@ go.work
 go.work.sum
 
 # env file
-.env
+.env*
 
 # Editor/IDE
-# .idea/
-# .vscode/
+.idea/
+.vscode/
+.DS_Store
 
 # bash
 .bashrc
 .bash_profile
 .bash_history
-

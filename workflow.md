@@ -1,6 +1,7 @@
 # Research
 
 ## Prompt
+
 read this folder in depth, understand how it works deeply, what it does and all its specificities. when that is done, write a detailed report of your learnings and findings into a file called "research.md"
 
 # Planning
