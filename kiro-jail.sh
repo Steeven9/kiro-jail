@@ -13,11 +13,11 @@ else
 	echo "Using defaults - see README to customize"
 fi
 
-export AWS_IDENTITY_PROVIDER_URL=${AWS_IDENTITY_PROVIDER_URL:-https://your-value.awsapps.com/start}
-export AWS_REGION=${AWS_REGION:-eu-central-1}
-export KIRO_JAIL=$(basename $(pwd))
-export KIRO_UID=$(id -u)
-export KIRO_GID=$(id -g)
+AWS_IDENTITY_PROVIDER_URL=${AWS_IDENTITY_PROVIDER_URL:-https://your-value.awsapps.com/start}
+AWS_REGION=${AWS_REGION:-eu-central-1}
+CONTAINER_NAME="kiro-$(basename $(pwd))"
+KIRO_UID=$(id -u)
+KIRO_GID=$(id -g)
 
 # build the image if not found locally
 if ! podman images | grep "${DOCKER_IMAGE_NAME}" >/dev/null; then
@@ -25,6 +25,7 @@ if ! podman images | grep "${DOCKER_IMAGE_NAME}" >/dev/null; then
 	podman build . -t "${DOCKER_IMAGE_NAME}"
 fi
 
+# create config dir if not existing
 mkdir -p "${KIRO_CONFIG_LOCATION}"
 
 echo "== Starting container... =="
@@ -33,6 +34,8 @@ podman run -it --rm \
 	-v "$(pwd):/home/kiro/project:rw,Z" \
 	-w /home/kiro/project \
 	-u "${KIRO_UID}:${KIRO_GID}" --userns keep-id \
-	--name "${KIRO_JAIL}" \
+	--name "${CONTAINER_NAME}" \
 	"${DOCKER_IMAGE_NAME}" /bin/bash \
 	-c "kiro-cli login --identity-provider ${AWS_IDENTITY_PROVIDER_URL} --region ${AWS_REGION} --use-device-flow; kiro-cli"
+
+echo "== Goodbye! =="

@@ -13,7 +13,7 @@ write a detailed "plan.md" file for outlining how to implement and achieve this.
 
 ## Annotation Cycle
 
-Adapt and anotate the plan.md file with finetuned instructions or plans.
+Adapt and annotate the plan.md file with fine-tuned instructions or plans.
 Once done, go through another planning prompt iteration.
 
 ## Prompt
