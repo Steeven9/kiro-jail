@@ -19,6 +19,12 @@ CONTAINER_NAME="kiro-$(basename $(pwd))"
 KIRO_UID=$(id -u)
 KIRO_GID=$(id -g)
 
+# start podman machine if not already running
+if ! podman machine ls | grep "Currently running" >/dev/null; then
+	echo "== Starting podman machine... =="
+	podman machine start
+fi
+
 # build the image if not found locally
 if ! podman images | grep "${DOCKER_IMAGE_NAME}" >/dev/null; then
 	echo "== Image ${DOCKER_IMAGE_NAME} not found locally, building it... =="
@@ -27,6 +33,16 @@ fi
 
 # create config dir if not existing
 mkdir -p "${KIRO_CONFIG_LOCATION}"
+
+# set up global ignore file - https://kiro.dev/docs/editor/kiroignore
+if ! [[ -f "${KIRO_CONFIG_LOCATION}/settings/kiroignore" ]]; then
+	echo "== Applying global .kiroignore settings... =="
+	echo '.env*
+.git/
+*.pem
+*.key
+' >"${KIRO_CONFIG_LOCATION}/settings/kiroignore"
+fi
 
 echo "== Starting container... =="
 podman run -it --rm \
