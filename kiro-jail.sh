@@ -10,29 +10,31 @@ if [[ -f "${AWS_CONFIG_LOCATION}" ]]; then
 	source "${AWS_CONFIG_LOCATION}"
 	echo "Config loaded from ${AWS_CONFIG_LOCATION}"
 else
-	echo "Using defaults - see README to customize"
+	echo "No config file found in ${AWS_CONFIG_LOCATION}, using defaults. See README to customize"
 fi
 
+# those two are set in the AWS_CONFIG_LOCATION file
 AWS_IDENTITY_PROVIDER_URL=${AWS_IDENTITY_PROVIDER_URL:-https://your-value.awsapps.com/start}
 AWS_REGION=${AWS_REGION:-eu-central-1}
-CONTAINER_NAME="kiro-$(basename $(pwd))"
+
+CONTAINER_NAME="kiro-$(basename "$(pwd)")"
 KIRO_UID=$(id -u)
 KIRO_GID=$(id -g)
 
 # start podman machine if not already running
-if ! podman machine ls | grep "Currently running" >/dev/null; then
+if [[ "$(podman machine inspect | jq '.[0].State')" != "\"running\"" ]]; then
 	echo "== Starting podman machine... =="
 	podman machine start
 fi
 
 # build the image if not found locally
-if ! podman images | grep "${DOCKER_IMAGE_NAME}" >/dev/null; then
+if ! podman image exists "${DOCKER_IMAGE_NAME}"; then
 	echo "== Image ${DOCKER_IMAGE_NAME} not found locally, building it... =="
-	podman build . -t "${DOCKER_IMAGE_NAME}"
+	podman build . -t "${DOCKER_IMAGE_NAME}" -f "$(dirname "$0")/Dockerfile"
 fi
 
 # create config dir if not existing
-mkdir -p "${KIRO_CONFIG_LOCATION}"
+mkdir -p "${KIRO_CONFIG_LOCATION}/settings"
 
 # set up global ignore file - https://kiro.dev/docs/editor/kiroignore
 if ! [[ -f "${KIRO_CONFIG_LOCATION}/settings/kiroignore" ]]; then
@@ -52,6 +54,6 @@ podman run -it --rm \
 	-u "${KIRO_UID}:${KIRO_GID}" --userns keep-id \
 	--name "${CONTAINER_NAME}" \
 	"${DOCKER_IMAGE_NAME}" /bin/bash \
-	-c "kiro-cli login --identity-provider ${AWS_IDENTITY_PROVIDER_URL} --region ${AWS_REGION} --use-device-flow; kiro-cli"
+	-c "kiro-cli login --identity-provider '${AWS_IDENTITY_PROVIDER_URL}' --region '${AWS_REGION}' --use-device-flow; kiro-cli"
 
 echo "== Goodbye! =="
