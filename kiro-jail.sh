@@ -35,12 +35,6 @@ if [[ "$OSTYPE" == "darwin"* && "$(podman machine inspect | jq '.[0].State')" !=
 	podman machine start
 fi
 
-# build the image if not found locally
-if ! podman image exists "${DOCKER_IMAGE_NAME}"; then
-	echo "== Image ${DOCKER_IMAGE_NAME} not found locally, building it... =="
-	podman build "$(dirname "$0")" -t "${DOCKER_IMAGE_NAME}"
-fi
-
 # create config dir if not existing
 mkdir -p "${KIRO_CONFIG_LOCATION}/settings"
 
