@@ -14,7 +14,7 @@ jobs:
     uses: soulsbros/CICD-template/.github/workflows/docker-build.yml@2f687755dff9b7110e952f1d3eb2f31ccd0ec308 # 1.1.1
     if: github.ref_type == 'tag'
     with:
-      image-name: steeven9/fenice2:${{ github.ref_name }}
+      image-name: steeven9/kiro-jail:${{ github.ref_name }}
       push: true
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -25,7 +25,7 @@ jobs:
     uses: soulsbros/CICD-template/.github/workflows/docker-build.yml@2f687755dff9b7110e952f1d3eb2f31ccd0ec308 # 1.1.1
     if: github.ref_type == 'branch'
     with:
-      image-name: steeven9/fenice2:latest
+      image-name: steeven9/kiro-jail:latest
       push: ${{ github.ref_name == 'main' }}
       ping_webhook: ${{ github.ref_name == 'main' }}
     secrets:
