@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DOCKER_IMAGE_NAME="localhost/kiro-jail"
+DOCKER_IMAGE_NAME="docker.io/steeven9/kiro-jail"
 AWS_CONFIG_LOCATION="${HOME}/.aws_identity_provider"
 KIRO_CONFIG_LOCATION="${HOME}/.kiro"
 

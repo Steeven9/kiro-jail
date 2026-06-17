@@ -1,5 +1,8 @@
 # kiro-jail
 
+[![License](https://img.shields.io/github/license/steeven9/kiro-jail)](/LICENSE)
+[![Pipeline](https://github.com/steeven9/kiro-jail/actions/workflows/docker-image.yml/badge.svg)](https://github.com/steeven9/kiro-jail/actions/workflows/docker-image.yml)
+
 kiro-cli container image &amp; runner script
 
 ## Setup
