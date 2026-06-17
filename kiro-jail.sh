@@ -5,6 +5,14 @@ DOCKER_IMAGE_NAME="localhost/kiro-jail"
 AWS_CONFIG_LOCATION="${HOME}/.aws_identity_provider"
 KIRO_CONFIG_LOCATION="${HOME}/.kiro"
 
+# check deps
+for cmd in podman jq; do
+	command -v "$cmd" >/dev/null 2>&1 || {
+		echo "Error: $cmd is not installed"
+		exit 1
+	}
+done
+
 echo "== Reading config... =="
 if [[ -f "${AWS_CONFIG_LOCATION}" ]]; then
 	source "${AWS_CONFIG_LOCATION}"
@@ -21,8 +29,8 @@ CONTAINER_NAME="kiro-$(basename "$(pwd)")"
 KIRO_UID=$(id -u)
 KIRO_GID=$(id -g)
 
-# start podman machine if not already running
-if [[ "$(podman machine inspect | jq '.[0].State')" != "\"running\"" ]]; then
+# start podman machine if not already running (only needed on Mac)
+if [[ "$OSTYPE" == "darwin"* && "$(podman machine inspect | jq '.[0].State')" != "\"running\"" ]]; then
 	echo "== Starting podman machine... =="
 	podman machine start
 fi
@@ -30,7 +38,7 @@ fi
 # build the image if not found locally
 if ! podman image exists "${DOCKER_IMAGE_NAME}"; then
 	echo "== Image ${DOCKER_IMAGE_NAME} not found locally, building it... =="
-	podman build . -t "${DOCKER_IMAGE_NAME}" -f "$(dirname "$0")/Dockerfile"
+	podman build "$(dirname "$0")" -t "${DOCKER_IMAGE_NAME}"
 fi
 
 # create config dir if not existing
